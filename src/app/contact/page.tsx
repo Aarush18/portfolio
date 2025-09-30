@@ -102,7 +102,7 @@ export default function ContactPage() {
       setForm({ status: "success" });
       formRef.current?.reset();
       setFields(initialFields);
-    } catch (_err) {
+    } catch  {
       // mailto fallback
       const mail = new URL(`mailto:aarushgupta2018@gmail.com`);
       const body = [
