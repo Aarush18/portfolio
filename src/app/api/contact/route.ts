@@ -132,8 +132,9 @@ export async function POST(req: NextRequest) {
     subject,
     html: renderHtml(data),
     text: renderText(data),
-    reply_to: data.email,
+    replyTo: data.email,        // ✅ camelCase, string or string[]
   });
+  
 
   if (result.error) {
     const message = typeof result.error === "object" && result.error !== null
