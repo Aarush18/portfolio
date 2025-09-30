@@ -3,23 +3,20 @@
 import { useEffect, useRef } from "react";
 import Globe, { GlobeMethods } from "react-globe.gl";
 
-/** Chandigarh pin */
 type LabelDatum = { lat: number; lng: number; label: string };
 const PIN: LabelDatum = { lat: 30.73, lng: 76.78, label: "Chandigarh" };
 
-/** Tunables */
-const SIZE = { sm: 280, md: 360, lg: 420 }; // px
-const ROTATE_SPEED = 1.4; // faster spin
+const SIZE = { sm: 280, md: 360, lg: 420 };
+const ROTATE_SPEED = 1.4;
 
 export default function MiniEarth() {
-  // IMPORTANT: no initializer -> current is `undefined` (not null)
-  const ref = useRef<GlobeMethods>();
+  // ✅ initialize with undefined to satisfy the Globe ref type
+  const ref = useRef<GlobeMethods | undefined>(undefined);
 
   useEffect(() => {
     const g = ref.current;
     if (!g) return;
 
-    // camera + controls
     const controls = g.controls();
     controls.autoRotate = true;
     controls.autoRotateSpeed = ROTATE_SPEED;
@@ -27,7 +24,6 @@ export default function MiniEarth() {
     controls.minDistance = 140;
     controls.maxDistance = 520;
 
-    // start angled on India
     g.pointOfView({ lat: PIN.lat, lng: PIN.lng, altitude: 1.8 }, 800);
   }, []);
 
@@ -42,9 +38,7 @@ export default function MiniEarth() {
 
   return (
     <div className="relative rounded-3xl border border-white/10 bg-white/[0.03] p-3 shadow-[0_10px_40px_-10px_rgba(139,92,246,0.25)] backdrop-blur">
-      {/* soft glow ring */}
       <div className="pointer-events-none absolute -inset-3 -z-10 rounded-[2rem] bg-[radial-gradient(40%_60%_at_70%_30%,rgba(167,139,250,0.18),transparent_60%),radial-gradient(30%_50%_at_30%_70%,rgba(236,72,153,0.16),transparent_60%)] blur-2xl" />
-
       <div style={{ width: w, height: w }} className="mx-auto">
         <Globe
           ref={ref}
