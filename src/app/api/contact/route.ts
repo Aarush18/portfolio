@@ -95,7 +95,6 @@ export async function POST(req: NextRequest) {
 
   const ip =
     req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
-    // @ts-expect-error — NextRequest.ip is available at runtime in Next.js 15
     (req as unknown as { ip?: string }).ip ||
     "0.0.0.0";
 
