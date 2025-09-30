@@ -1,10 +1,12 @@
 "use client";
 
+import Image from "next/image";
 import React, { useEffect, useMemo, useRef, useState } from "react";
+import type { CSSProperties } from "react";
 
 type SkillLogo = {
   name: string;
-  file: string;      // filename inside /public/skills (png/svg)
+  file: string;      // filename inside /public/skills
   hue?: string;      // brand glow color
   href?: string;     // optional external link
 };
@@ -12,9 +14,9 @@ type SkillLogo = {
 type SkillsGridProps = {
   title?: string;
   subtitle?: string;
-  logos?: SkillLogo[];      // custom list overrides default
+  logos?: SkillLogo[];
   className?: string;
-  showLabels?: boolean;     // small text label under each icon
+  showLabels?: boolean;
   iconClassName?: string;   // size of the icon image
   tilePadding?: string;     // padding of each tile
 };
@@ -25,22 +27,20 @@ function cn(...xs: Array<string | false | null | undefined>) {
 
 /** Uses your actual PNG filenames under /public/skills */
 const DEFAULT_LOGOS: SkillLogo[] = [
-    { name: "Next.js",     file: "next.png",       hue: "#ffffff", href: "https://nextjs.org" },
-    { name: "React",       file: "react.png",      hue: "#61DAFB", href: "https://react.dev" },
-    { name: "TypeScript",  file: "typescript.png", hue: "#3178C6", href: "https://www.typescriptlang.org" },
-    { name: "tRPC",        file: "trpc.png",       hue: "#14b8a6", href: "https://trpc.io" },
-    { name: "JavaScript",  file: "javascript.png", hue: "#F7DF1E" },
-    // NEW ↓
-    { name: "Node.js",     file: "nodejs.png",     hue: "#3C873A", href: "https://nodejs.org" },
-    { name: "Express",     file: "express.png",    hue: "#AAAAAA", href: "https://expressjs.com" },
-    // EXISTING ↓
-    { name: "C++",         file: "cpp.png",        hue: "#00599C" },
-    { name: "Python",      file: "python.png",     hue: "#3776AB" },
-    { name: "Postgres",    file: "postgres.png",   hue: "#336791" },
-    { name: "MongoDB",     file: "mongodb.png",    hue: "#10b981" },
-    { name: "OpenAI",      file: "openai.png",     hue: "#10A37F" },
-  ];
-  
+  { name: "Next.js",     file: "next.png",       hue: "#ffffff", href: "https://nextjs.org" },
+  { name: "React",       file: "react.png",      hue: "#61DAFB", href: "https://react.dev" },
+  { name: "TypeScript",  file: "typescript.png", hue: "#3178C6", href: "https://www.typescriptlang.org" },
+  { name: "tRPC",        file: "trpc.png",       hue: "#14b8a6", href: "https://trpc.io" },
+  { name: "JavaScript",  file: "javascript.png", hue: "#F7DF1E" },
+  { name: "Node.js",     file: "nodejs.png",     hue: "#3C873A", href: "https://nodejs.org" },
+  { name: "Express",     file: "express.png",    hue: "#AAAAAA", href: "https://expressjs.com" },
+  { name: "C++",         file: "cpp.png",        hue: "#00599C" },
+  { name: "Python",      file: "python.png",     hue: "#3776AB" },
+  { name: "Postgres",    file: "postgres.png",   hue: "#336791" },
+  { name: "MongoDB",     file: "mongodb.png",    hue: "#10b981" },
+  { name: "OpenAI",      file: "openai.png",     hue: "#10A37F" },
+];
+
 function useInViewOnce<T extends HTMLElement>(opts?: IntersectionObserverInit) {
   const ref = useRef<T | null>(null);
   const [inView, setInView] = useState(false);
@@ -48,7 +48,7 @@ function useInViewOnce<T extends HTMLElement>(opts?: IntersectionObserverInit) {
   useEffect(() => {
     if (!ref.current || inView) return;
     const io = new IntersectionObserver(
-      (entries) => {
+      (entries: IntersectionObserverEntry[]) => {
         for (const e of entries) {
           if (e.isIntersecting) {
             setInView(true);
@@ -72,7 +72,7 @@ export default function SkillsGrid({
   logos,
   className,
   showLabels = false,
-  // BIGGER defaults per your ask
+  // bigger defaults
   iconClassName = "h-20 w-20 md:h-24 md:w-24",
   tilePadding = "p-6 md:p-8",
 }: SkillsGridProps) {
@@ -121,6 +121,20 @@ export default function SkillsGrid({
           </li>
         ))}
       </ul>
+
+      {/* local shimmer keyframes */}
+      <style jsx>{`
+        @keyframes skills-shimmer {
+          0%   { transform: translateX(-120%) rotate(6deg); }
+          100% { transform: translateX(220%) rotate(6deg); }
+        }
+        .animate-skills-shimmer {
+          animation: skills-shimmer 1.2s linear infinite;
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .animate-skills-shimmer { animation: none !important; }
+        }
+      `}</style>
     </section>
   );
 }
@@ -144,6 +158,10 @@ function LogoTile({
 }) {
   const Wrapper = (href ? "a" : "button") as "a" | "button";
 
+  // type-safe CSS custom property for brand glow (no `any`)
+  type BrandStyle = CSSProperties & Record<"--brand", string>;
+  const brandStyle: BrandStyle = { "--brand": hue };
+
   return (
     <div className="flex flex-col items-center gap-2">
       <Wrapper
@@ -154,17 +172,14 @@ function LogoTile({
         title={name}
         className={cn(
           "group relative flex aspect-square items-center justify-center rounded-xl",
-          // glassy + soft inner look
           "bg-white/5 hover:bg-white/10 shadow-inner",
-          // focus ring & transform
           "transition-transform duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[--brand]",
-          // glow on hover/focus
           "hover:[filter:drop-shadow(0_0_18px_var(--brand))] focus-visible:[filter:drop-shadow(0_0_18px_var(--brand))]",
           tilePadding
         )}
-        style={{ ["--brand" as any]: hue } as React.CSSProperties}
+        style={brandStyle}
       >
-        {/* shimmer overlay (disabled by prefers-reduced-motion via CSS) */}
+        {/* shimmer overlay */}
         <span
           aria-hidden
           className="pointer-events-none absolute inset-0 overflow-hidden rounded-xl opacity-0 transition-opacity duration-200 group-hover:opacity-100 group-focus-visible:opacity-100"
@@ -173,15 +188,18 @@ function LogoTile({
         </span>
 
         {/* brand icon (local file) */}
-        <img
+        <Image
           src={`/skills/${file}`}
-          alt=""                // decorative; labelled by button title + aria-label
+          alt="" // decorative (button has label/title)
           aria-hidden
           draggable={false}
+          width={160}
+          height={160}
           className={cn(
             iconClassName,
             "transition-transform duration-200 group-hover:scale-[1.1] group-focus-visible:scale-[1.1]"
           )}
+          priority={false}
         />
 
         <span className="sr-only">{name}</span>

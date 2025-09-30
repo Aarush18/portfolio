@@ -102,7 +102,7 @@ export default function ContactPage() {
       setForm({ status: "success" });
       formRef.current?.reset();
       setFields(initialFields);
-    } catch (err) {
+    } catch (_err) {
       // mailto fallback
       const mail = new URL(`mailto:aarushgupta2018@gmail.com`);
       const body = [
@@ -161,8 +161,8 @@ export default function ContactPage() {
             Contact
           </h1>
           <p className="mt-3 text-zinc-400">
-            Want to collaborate or hire me? Drop a message—I'll get back within
-            24h.
+            Want to collaborate or hire me? Drop a message—I&apos;ll get back
+            within 24h.
           </p>
 
           <div className="relative mt-6 h-[6px] w-40 overflow-hidden rounded-full bg-white/5">
