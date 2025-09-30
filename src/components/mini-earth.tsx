@@ -12,18 +12,20 @@ const SIZE = { sm: 280, md: 360, lg: 420 }; // px
 const ROTATE_SPEED = 1.4; // faster spin
 
 export default function MiniEarth() {
-  const ref = useRef<GlobeMethods | null>(null);
+  // IMPORTANT: no initializer -> current is `undefined` (not null)
+  const ref = useRef<GlobeMethods>();
 
   useEffect(() => {
     const g = ref.current;
     if (!g) return;
 
     // camera + controls
-    g.controls().autoRotate = true;
-    g.controls().autoRotateSpeed = ROTATE_SPEED;
-    g.controls().enablePan = false;
-    g.controls().minDistance = 140;
-    g.controls().maxDistance = 520;
+    const controls = g.controls();
+    controls.autoRotate = true;
+    controls.autoRotateSpeed = ROTATE_SPEED;
+    controls.enablePan = false;
+    controls.minDistance = 140;
+    controls.maxDistance = 520;
 
     // start angled on India
     g.pointOfView({ lat: PIN.lat, lng: PIN.lng, altitude: 1.8 }, 800);
