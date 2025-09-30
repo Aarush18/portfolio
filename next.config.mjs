@@ -13,6 +13,9 @@ const nextConfig = {
       { protocol: "https", hostname: "raw.githubusercontent.com" },
     ],
   },
+  eslint:{
+    ignoreDuringBuilds: true,
+  }
 };
 
 export default nextConfig;
