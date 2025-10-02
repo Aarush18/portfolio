@@ -58,12 +58,11 @@ export default function Ticker({
       `}</style>
 
       {/* Full-bleed container: uses negative margins to extend beyond the typical centered content */}
-      {/* UPDATED: Added moderate vertical padding (py-4) for spacing above and below the text */}
       <div className="-mx-[calc(50vw-50%)] py-4 md:py-4">
         
         {/* Edge Fades (Visual effect to make text appear and disappear smoothly) */}
-        <div className="pointer-events-none absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-gray-900 to-transparent z-10" />
-        <div className="pointer-events-none absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-gray-900 to-transparent z-10" />
+        {/* REMOVED: Left fade (w-24 bg-gradient-to-r...) */}
+        {/* REMOVED: Right fade (w-24 bg-gradient-to-l...) */}
 
         {/* Animation Wrapper */}
         <div className="whitespace-nowrap will-change-transform">
@@ -93,6 +92,3 @@ export default function Ticker({
     </section>
   );
 }
-
-// REMOVED the redundant 'App' component, as 'Ticker' is now the default export.
-// This simplifies the component structure since you only wanted the Ticker element.
