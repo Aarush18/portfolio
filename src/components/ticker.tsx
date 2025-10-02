@@ -6,11 +6,12 @@ import React, { CSSProperties } from 'react'; // Import React and CSSProperties
 /**
  * Ticker component implements a full-bleed, seamlessly looping marquee animation.
  * It uses Tailwind CSS for styling and inline CSS for the keyframe animation.
+ * * NOTE: This is now the default export.
  */
-function Ticker({
+export default function Ticker({
   items = ["AARUSH GUPTA", "BUILD", "DESIGN", "DEVELOP"],
   separator = " — ",
-  speed = 100, // Higher value means slower animation (e.g., 100s)
+  speed = 42, // Defaulting speed to 42s as requested by user
 }: {
   items?: string[];
   separator?: string;
@@ -20,11 +21,10 @@ function Ticker({
   const line = useMemo(() => items.join(separator) + separator, [items, separator]);
 
   // 2. Determine the animation duration based on the input speed.
-  // The value is passed as a CSS variable '--s' to the style prop.
   const animationDuration = `${speed}s`;
 
   // Define the style object with the custom property.
-  // We use type assertion (<CSSProperties>) to tell TypeScript to accept the custom variable.
+  // Using type assertion to tell TypeScript to accept the custom CSS variable '--s'.
   const marqueeStyle: CSSProperties = {
     "--s": animationDuration,
   } as CSSProperties & { 
@@ -37,7 +37,6 @@ function Ticker({
     <section className="relative mt-4 md:mt-4 bg-gray-900 shadow-xl">
 
       {/* Inject custom CSS for the marquee animation */}
-      {/* This ensures the keyframes and animation classes are available */}
       <style>{`
         /* Define the marquee keyframes */
         @keyframes marquee-animation {
@@ -95,17 +94,5 @@ function Ticker({
   );
 }
 
-// Main component that wraps the Ticker for the single-file React structure.
-export default function App() {
-
-    return (
-        // Changed min-h-screen to h-auto and removed justify-center to display only the element
-        <div className="h-auto bg-gray-900 text-white font-sans flex flex-col items-center">
-            
-            {/* Render the Marquee Ticker directly with fixed speed */}
-            <Ticker speed={42} />
-            
-            {/* Removed header and footer elements */}
-        </div>
-    );
-}
+// REMOVED the redundant 'App' component, as 'Ticker' is now the default export.
+// This simplifies the component structure since you only wanted the Ticker element.
